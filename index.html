@@ -17,7 +17,6 @@ body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     background: linear-gradient(135deg, #ecf0f1, #dfe6e9);
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,7 +26,7 @@ body {
 .container {
     width: 100%;
     max-width: 420px;
-    padding: 20px;
+    padding: 15px;
 }
 
 .card {
@@ -43,22 +42,17 @@ h2 {
     color: var(--dark);
 }
 
-/* INPUT CENTRALIZADO */
 .input-group {
     margin-bottom: 15px;
-    display: flex;
-    justify-content: center;
 }
 
 input {
-    width: 90%;
-    max-width: 320px;
+    width: 100%;
     padding: 14px;
     border-radius: 10px;
     border: 1px solid #ddd;
     font-size: 15px;
     text-align: center;
-    transition: 0.2s;
 }
 
 input:focus {
@@ -67,12 +61,8 @@ input:focus {
     background: #fffbea;
 }
 
-/* BOTÃO */
 .btn {
-    width: 90%;
-    max-width: 320px;
-    margin: 20px auto 0 auto;
-    display: block;
+    width: 100%;
     padding: 16px;
     border: none;
     border-radius: 12px;
@@ -81,10 +71,6 @@ input:focus {
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-}
-
-.btn:hover {
-    background: #1f2d3a;
 }
 
 /* RECIBO */
@@ -97,16 +83,11 @@ input:focus {
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-.recibo h3 {
     text-align: center;
-    margin-bottom: 15px;
 }
 
 .linha {
-    margin-bottom: 10px;
-    font-size: 14px;
+    margin-bottom: 8px;
 }
 
 .valor {
@@ -114,8 +95,7 @@ input:focus {
     padding: 15px;
     background: #f7f7f7;
     border-radius: 10px;
-    text-align: center;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
     color: var(--success);
 }
@@ -126,24 +106,48 @@ input:focus {
 
 <div class="container">
 
-<!-- FORM -->
 <div id="formTela" class="card">
     <h2>Taxi Online</h2>
 
-    <div class="input-group"><input type="text" id="motorista" placeholder="Motorista"></div>
-    <div class="input-group"><input type="tel" id="tel_motorista" placeholder="Telefone"></div>
-    <div class="input-group"><input type="text" id="placa" placeholder="Placa"></div>
-    <div class="input-group"><input type="text" id="origem" placeholder="Origem"></div>
-    <div class="input-group"><input type="text" id="destino" placeholder="Destino"></div>
-    <div class="input-group"><input type="datetime-local" id="data"></div>
-    <div class="input-group"><input type="text" id="valor" placeholder="R$ 0,00"></div>
-    <div class="input-group"><input type="text" id="cliente" placeholder="Cliente"></div>
-    <div class="input-group"><input type="tel" id="tel_cliente" placeholder="Telefone Cliente"></div>
+    <div class="input-group">
+        <input type="text" id="motorista" placeholder="Motorista">
+    </div>
+
+    <div class="input-group">
+        <input type="tel" id="tel_motorista" placeholder="Telefone">
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="placa" placeholder="Placa (7 caracteres)" maxlength="7">
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="origem" placeholder="Origem">
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="destino" placeholder="Destino">
+    </div>
+
+    <div class="input-group">
+        <input type="datetime-local" id="data">
+    </div>
+
+    <div class="input-group">
+        <input type="tel" id="valor" placeholder="R$ 0,00" inputmode="numeric">
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="cliente" placeholder="Cliente">
+    </div>
+
+    <div class="input-group">
+        <input type="tel" id="tel_cliente" placeholder="Telefone Cliente">
+    </div>
 
     <button class="btn" onclick="criarRecibo()">Criar Recibo</button>
 </div>
 
-<!-- RECIBO -->
 <div id="reciboTela">
     <div class="recibo">
         <h3>RECIBO DE TAXI</h3>
@@ -170,23 +174,45 @@ input:focus {
 </div>
 
 <script>
-// moeda automática
-document.getElementById('valor').addEventListener('input', e => {
-    let v = e.target.value.replace(/\D/g,'');
-    v = (v/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-    e.target.value = v;
-});
-
-// data atual
+// --- DATA AUTOMÁTICA ---
 window.onload = () => {
     const d = new Date();
     d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
     document.getElementById('data').value = d.toISOString().slice(0,16);
 };
 
+// --- MÁSCARA TELEFONE ---
+function mascaraTelefone(v) {
+    v = v.replace(/\D/g, '');
+    v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+    v = v.replace(/(\d{5})(\d)/, "$1-$2");
+    return v;
+}
+
+tel_motorista.addEventListener('input', e => {
+    e.target.value = mascaraTelefone(e.target.value);
+});
+
+tel_cliente.addEventListener('input', e => {
+    e.target.value = mascaraTelefone(e.target.value);
+});
+
+// --- PLACA MAIÚSCULA ---
+placa.addEventListener('input', e => {
+    e.target.value = e.target.value.toUpperCase();
+});
+
+// --- MÁSCARA REAL ---
+valor.addEventListener('input', e => {
+    let v = e.target.value.replace(/\D/g,'');
+    v = (v/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    e.target.value = v;
+});
+
+// --- CRIAR RECIBO ---
 function criarRecibo(){
-    document.getElementById('formTela').style.display = 'none';
-    document.getElementById('reciboTela').style.display = 'block';
+    formTela.style.display = 'none';
+    reciboTela.style.display = 'block';
 
     r_motorista.innerText = motorista.value;
     r_tel_motorista.innerText = tel_motorista.value;
