@@ -1,230 +1,203 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recibo de Taxi Online</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        :root { --primary: #f1c40f; --dark: #2c3e50; --success: #27ae60; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #ecf0f1; padding: 15px; color: #2c3e50; }
-        .container { max-width: 450px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: auto; }
-        h2 { text-align: center; margin-bottom: 25px; color: var(--dark); font-weight: 800; border-bottom: 3px solid var(--primary); padding-bottom: 10px; }
-        
-        .section-title { font-size: 11px; color: #7f8c8d; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; }
-        .field-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 13px; }
-        input { width: 100%; padding: 10px; border: 1px solid #dcdde1; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
-        input:focus { border-color: var(--primary); outline: none; background-color: #fefcf0; }
-        
-        .row { display: flex; gap: 10px; }
-        .row > div { flex: 1; }
-        
-        .btn-group { margin-top: 25px; display: flex; flex-direction: column; gap: 10px; }
-        button { padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
-        .btn-pdf { background-color: var(--dark); color: white; }
-        .btn-share { background-color: var(--success); color: white; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taxi Online</title>
+
+<style>
+:root {
+    --primary: #f1c40f;
+    --dark: #2c3e50;
+    --light: #ecf0f1;
+    --success: #27ae60;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #ecf0f1, #dfe6e9);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--dark);
+}
+
+/* INPUT CENTRALIZADO */
+.input-group {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+input {
+    width: 90%;
+    max-width: 320px;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    text-align: center;
+    transition: 0.2s;
+}
+
+input:focus {
+    border-color: var(--primary);
+    outline: none;
+    background: #fffbea;
+}
+
+/* BOTÃO */
+.btn {
+    width: 90%;
+    max-width: 320px;
+    margin: 20px auto 0 auto;
+    display: block;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    background: var(--dark);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #1f2d3a;
+}
+
+/* RECIBO */
+#reciboTela {
+    display: none;
+}
+
+.recibo {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.recibo h3 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.linha {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.valor {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f7f7f7;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--success);
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
+
+<!-- FORM -->
+<div id="formTela" class="card">
     <h2>Taxi Online</h2>
-    
-    <div class="section-title">Dados do Motorista</div>
-    <div class="field-group">
-        <label>Nome do Motorista</label>
-        <input type="text" id="motorista" placeholder="Nome completo">
-    </div>
-    <div class="row">
-        <div class="field-group">
-            <label>Telefone</label>
-            <input type="tel" id="tel_motorista" placeholder="(00) 00000-0000">
-        </div>
-        <div class="field-group">
-            <label>Placa</label>
-            <input type="text" id="placa" placeholder="BRA2E19">
-        </div>
-    </div>
 
-    <div class="section-title">Dados da Corrida</div>
-    <div class="field-group">
-        <label>Origem</label>
-        <input type="text" id="origem" placeholder="Ponto de partida">
-    </div>
-    <div class="field-group">
-        <label>Destino</label>
-        <input type="text" id="destino" placeholder="Ponto de chegada">
-    </div>
-    <div class="row">
-        <div class="field-group">
-            <label>Data e Hora</label>
-            <input type="datetime-local" id="data">
-        </div>
-        <div class="field-group">
-            <label>Valor (R$)</label>
-            <input type="text" id="valor" placeholder="R$ 0,00" style="font-weight: bold; color: var(--success);">
-        </div>
-    </div>
+    <div class="input-group"><input type="text" id="motorista" placeholder="Motorista"></div>
+    <div class="input-group"><input type="tel" id="tel_motorista" placeholder="Telefone"></div>
+    <div class="input-group"><input type="text" id="placa" placeholder="Placa"></div>
+    <div class="input-group"><input type="text" id="origem" placeholder="Origem"></div>
+    <div class="input-group"><input type="text" id="destino" placeholder="Destino"></div>
+    <div class="input-group"><input type="datetime-local" id="data"></div>
+    <div class="input-group"><input type="text" id="valor" placeholder="R$ 0,00"></div>
+    <div class="input-group"><input type="text" id="cliente" placeholder="Cliente"></div>
+    <div class="input-group"><input type="tel" id="tel_cliente" placeholder="Telefone Cliente"></div>
 
-    <div class="section-title">Dados do Cliente</div>
-    <div class="field-group">
-        <label>Nome do Cliente</label>
-        <input type="text" id="cliente" placeholder="Nome do passageiro">
-    </div>
-    <div class="field-group">
-        <label>Telefone do Cliente</label>
-        <input type="tel" id="tel_cliente" placeholder="(00) 00000-0000">
-    </div>
+    <button class="btn" onclick="criarRecibo()">Criar Recibo</button>
+</div>
 
-    <div class="btn-group">
-        <button class="btn-pdf" onclick="gerarPDF(false)">Gerar PDF</button>
-        <button class="btn-share" onclick="gerarPDF(true)">Enviar p/ WhatsApp</button>
+<!-- RECIBO -->
+<div id="reciboTela">
+    <div class="recibo">
+        <h3>RECIBO DE TAXI</h3>
+
+        <div class="linha"><b>Motorista:</b> <span id="r_motorista"></span></div>
+        <div class="linha"><b>Telefone:</b> <span id="r_tel_motorista"></span></div>
+        <div class="linha"><b>Placa:</b> <span id="r_placa"></span></div>
+
+        <hr>
+
+        <div class="linha"><b>Origem:</b> <span id="r_origem"></span></div>
+        <div class="linha"><b>Destino:</b> <span id="r_destino"></span></div>
+        <div class="linha"><b>Data:</b> <span id="r_data"></span></div>
+
+        <hr>
+
+        <div class="linha"><b>Cliente:</b> <span id="r_cliente"></span></div>
+        <div class="linha"><b>Telefone:</b> <span id="r_tel_cliente"></span></div>
+
+        <div class="valor" id="r_valor"></div>
     </div>
 </div>
 
+</div>
+
 <script>
-    // --- MÁSCARA DE MOEDA ---
-    const inputValor = document.getElementById('valor');
-    inputValor.addEventListener('input', (e) => {
-        let v = e.target.value.replace(/\D/g, '');
-        v = (v / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        e.target.value = v;
-    });
+// moeda automática
+document.getElementById('valor').addEventListener('input', e => {
+    let v = e.target.value.replace(/\D/g,'');
+    v = (v/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    e.target.value = v;
+});
 
-    // --- DATA ATUAL ---
-    window.onload = () => {
-        const agora = new Date();
-        agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
-        document.getElementById('data').value = agora.toISOString().slice(0, 16);
-    };
+// data atual
+window.onload = () => {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    document.getElementById('data').value = d.toISOString().slice(0,16);
+};
 
-    // --- FUNÇÃO VALOR POR EXTENSO ---
-    function valorPorExtenso(val) {
-        let cleanVal = val.replace("R$", "").replace(/\./g, "").replace(",", ".");
-        let valor = parseFloat(cleanVal);
-        if (!valor) return "";
+function criarRecibo(){
+    document.getElementById('formTela').style.display = 'none';
+    document.getElementById('reciboTela').style.display = 'block';
 
-        const unidades = ["", "Um", "Dois", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove"];
-        const dezena1 = ["Dez", "Onze", "Doze", "Treze", "Quatorze", "Quinze", "Dezesseis", "Dezessete", "Dezoito", "Dezenove"];
-        const dezenas = ["", "", "Vinte", "Trinta", "Quarenta", "Cinquenta", "Sessenta", "Setenta", "Oitenta", "Noventa"];
-        const centenas = ["", "Cento", "Duzentos", "Trezentos", "Quatrocentos", "Quinhentos", "Seiscentos", "Setecentos", "Oitocentos", "Novecentos"];
-
-        function conversor(n) {
-            if (n === 0) return "";
-            if (n === 100) return "Cem";
-            let res = "";
-            if (n >= 100) {
-                res += centenas[Math.floor(n / 100)];
-                n %= 100;
-                if (n > 0) res += " e ";
-            }
-            if (n >= 10 && n < 20) {
-                res += dezena1[n - 10];
-            } else {
-                if (n >= 20) {
-                    res += dezenas[Math.floor(n / 10)];
-                    n %= 10;
-                    if (n > 0) res += " e ";
-                }
-                if (n > 0) res += unidades[n];
-            }
-            return res;
-        }
-
-        let inteiro = Math.floor(valor);
-        let centavos = Math.round((valor - inteiro) * 100);
-        let partes = [];
-
-        if (inteiro > 0) {
-            let textoInteiro = conversor(inteiro) + (inteiro === 1 ? " Real" : " Reais");
-            partes.push(textoInteiro);
-        }
-        if (centavos > 0) {
-            let textoCentavos = conversor(centavos) + (centavos === 1 ? " Centavo" : " Centavos");
-            partes.push(textoCentavos);
-        }
-
-        return partes.join(" e ");
-    }
-
-    async function gerarPDF(compartilhar) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        const dados = {
-            motorista: document.getElementById('motorista').value,
-            tel_mot: document.getElementById('tel_motorista').value,
-            placa: document.getElementById('placa').value.toUpperCase(),
-            valor: document.getElementById('valor').value,
-            extenso: valorPorExtenso(document.getElementById('valor').value),
-            origem: document.getElementById('origem').value,
-            destino: document.getElementById('destino').value,
-            data: new Date(document.getElementById('data').value).toLocaleString('pt-BR'),
-            cliente: document.getElementById('cliente').value,
-            tel_cli: document.getElementById('tel_cliente').value
-        };
-
-        // Cabeçalho PDF
-        doc.setFillColor(44, 62, 80);
-        doc.rect(0, 0, 210, 35, 'F');
-        doc.setFontSize(22);
-        doc.setTextColor(241, 196, 15);
-        doc.setFont(undefined, 'bold');
-        doc.text("RECIBO DE TAXI ONLINE", 105, 22, { align: "center" });
-        
-        doc.setTextColor(60);
-        doc.setFontSize(11);
-        
-        let y = 50;
-        const addInfo = (label, info) => {
-            doc.setFont(undefined, 'bold');
-            doc.text(label + ":", 20, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(info || "---", 60, y);
-            y += 9;
-        };
-
-        addInfo("Motorista", dados.motorista);
-        addInfo("Telefone", dados.tel_mot);
-        addInfo("Placa", dados.placa);
-        doc.line(20, y, 190, y); y += 10;
-
-        addInfo("Origem", dados.origem);
-        addInfo("Destino", dados.destino);
-        addInfo("Data e Hora", dados.data);
-        doc.line(20, y, 190, y); y += 10;
-
-        addInfo("Cliente", dados.cliente);
-        addInfo("Tel. Cliente", dados.tel_cli);
-
-        // Caixa de Valor
-        y += 10;
-        doc.setFillColor(245, 245, 245);
-        doc.rect(20, y, 170, 30, 'F');
-        doc.setDrawColor(200);
-        doc.rect(20, y, 170, 30);
-
-        doc.setFontSize(14);
-        doc.setFont(undefined, 'bold');
-        doc.text(`VALOR: ${dados.valor}`, 105, y + 10, { align: "center" });
-        
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'italic');
-        // Quebra de linha automática para o extenso se for muito longo
-        const splitExtenso = doc.splitTextToSize(`(${dados.extenso})`, 150);
-        doc.text(splitExtenso, 105, y + 20, { align: "center" });
-
-        if (compartilhar) {
-            const pdfBlob = doc.output('blob');
-            const file = new File([pdfBlob], "recibo.pdf", { type: "application/pdf" });
-            if (navigator.share) {
-                await navigator.share({ files: [file], title: 'Recibo Taxi' });
-            } else { alert("Use 'Gerar PDF'. Seu navegador não suporta envio direto."); }
-        } else {
-            doc.save(`recibo_${dados.cliente}.pdf`);
-        }
-    }
+    r_motorista.innerText = motorista.value;
+    r_tel_motorista.innerText = tel_motorista.value;
+    r_placa.innerText = placa.value;
+    r_origem.innerText = origem.value;
+    r_destino.innerText = destino.value;
+    r_data.innerText = new Date(data.value).toLocaleString('pt-BR');
+    r_cliente.innerText = cliente.value;
+    r_tel_cliente.innerText = tel_cliente.value;
+    r_valor.innerText = valor.value;
+}
 </script>
 
 </body>
