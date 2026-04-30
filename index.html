@@ -67,7 +67,6 @@
 </head>
 <body>
 
-<!-- MODAL CUSTOMIZADO -->
 <div id="modal-overlay">
     <div id="modal-box">
         <span class="modal-icon">📸</span>
@@ -84,10 +83,12 @@
     <div id="tela-cadastro">
         <h2>Configurar Motorista</h2>
         <div class="field-group"><label>Nome do Motorista</label><input type="text" id="reg_motorista" placeholder="Nome completo"></div>
-        <div class="field-group"><label>Telefone do motorista</label><input type="text" id="reg_tel" placeholder="Apenas números" class="only-numbers"></div>
+        <!-- Adicionado inputmode="numeric" -->
+        <div class="field-group"><label>Telefone do motorista</label><input type="text" id="reg_tel" placeholder="Apenas números" class="only-numbers" inputmode="numeric"></div>
         <div class="row">
             <div class="field-group"><label>Placa do carro</label><input type="text" id="reg_placa" placeholder="ABC1D23" maxlength="7"></div>
-            <div class="field-group"><label>CPF ou CNPJ Apenas números</label><input type="text" id="reg_doc" placeholder="Apenas números" class="only-numbers"></div>
+            <!-- Adicionado inputmode="numeric" -->
+            <div class="field-group"><label>CPF ou CNPJ Apenas números</label><input type="text" id="reg_doc" placeholder="Apenas números" class="only-numbers" inputmode="numeric"></div>
         </div>
         <button class="btn-save" onclick="salvarCadastro()">Salvar Cadastro</button>
     </div>
@@ -101,11 +102,13 @@
         <div class="field-group"><label>Destino</label><input type="text" id="destino" placeholder="Ponto de chegada" class="required"></div>
         <div class="row">
             <div class="field-group"><label>Data/Hora</label><input type="datetime-local" id="data" class="required"></div>
-            <div class="field-group"><label>Valor (R$)</label><input type="text" id="valor" placeholder="R$ 0,00" class="required" style="font-weight:bold; color:var(--success)"></div>
+            <!-- Adicionado inputmode="numeric" -->
+            <div class="field-group"><label>Valor (R$)</label><input type="text" id="valor" placeholder="R$ 0,00" class="required" style="font-weight:bold; color:var(--success)" inputmode="numeric"></div>
         </div>
         <div class="section-title">Dados do Cliente</div>
         <div class="field-group"><label>Nome do Cliente</label><input type="text" id="cliente" placeholder="Nome do passageiro" class="required"></div>
-        <div class="field-group"><label>Telefone do Cliente</label><input type="text" id="tel_cliente" placeholder="Apenas números" class="required only-numbers"></div>
+        <!-- Adicionado inputmode="numeric" -->
+        <div class="field-group"><label>Telefone do Cliente</label><input type="text" id="tel_cliente" placeholder="Apenas números" class="required only-numbers" inputmode="numeric"></div>
         <button id="btn-gerar" class="btn-primary" onclick="mostrarRecibo()">Fazer recibo</button>
     </div>
 
@@ -136,6 +139,7 @@
 </div>
 
 <script>
+    // Scripts permanecem os mesmos, mantendo a lógica de máscara e validação
     function fecharModal() { document.getElementById('modal-overlay').style.display = 'none'; }
 
     function inicializarApp() {
@@ -220,8 +224,6 @@
 
         document.getElementById('tela-formulario').style.display = 'none';
         document.getElementById('visualizacao').style.display = 'block';
-        
-        // MOSTRAR NOVO POPUP
         document.getElementById('modal-overlay').style.display = 'flex';
         window.scrollTo(0,0);
     }
