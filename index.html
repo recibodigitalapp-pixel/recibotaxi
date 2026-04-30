@@ -1,230 +1,269 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Taxi Online</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recibo de Taxi Online</title>
+    <style>
+        :root { --primary: #f1c40f; --dark: #2c3e50; --success: #27ae60; --text: #2c3e50; --orange: #e67e22; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #ecf0f1; padding: 15px; color: var(--text); }
+        .container { max-width: 450px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: auto; }
+        
+        h2 { text-align: center; margin-bottom: 25px; color: var(--dark); font-weight: 800; border-bottom: 3px solid var(--primary); padding-bottom: 10px; }
+        
+        .section-title { font-size: 11px; color: #7f8c8d; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; }
+        .field-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 13px; }
+        input { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        input:focus { border-color: var(--primary); outline: none; background-color: #fefcf0; }
+        .row { display: flex; gap: 10px; }
+        .row > div { flex: 1; }
 
-<style>
-:root {
-    --primary: #f1c40f;
-    --dark: #2c3e50;
-    --light: #ecf0f1;
-    --success: #27ae60;
-}
+        button { padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; width: 100%; }
+        .btn-primary { background-color: var(--dark); color: white; display: none; margin-top: 20px; }
+        .btn-save { background-color: var(--success); color: white; }
 
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #ecf0f1, #dfe6e9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
+        #tela-cadastro, #tela-formulario, #visualizacao { display: none; }
 
-.container {
-    width: 100%;
-    max-width: 420px;
-    padding: 15px;
-}
+        /* Estilo Recibo Final */
+        .recibo-preview { border: 2px solid #eee; padding: 20px; border-radius: 10px; background: #fff; }
+        .recibo-header { background: var(--dark); color: var(--primary); margin: -20px -20px 20px -20px; padding: 15px; text-align: center; font-weight: bold; font-size: 18px; }
+        .info-row { margin-bottom: 10px; border-bottom: 1px dotted #eee; padding-bottom: 5px; font-size: 14px; }
+        .info-label { font-weight: bold; color: #7f8c8d; font-size: 11px; display: block; text-transform: uppercase; }
+        
+        .valor-box { 
+            background: #f9f9f9; 
+            padding: 15px; 
+            border-radius: 8px; 
+            text-align: center; 
+            margin-top: 20px; 
+            border: 2px dashed var(--success); 
+            cursor: pointer; 
+        }
+        .valor-num { font-size: 24px; font-weight: 800; color: var(--success); display: block; }
 
-.card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-}
+        .edit-link { text-align: center; font-size: 12px; color: #3498db; cursor: pointer; margin-bottom: 15px; display: block; text-decoration: underline; }
 
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: var(--dark);
-}
+        /* NOVO POPUP (MODAL) */
+        #modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;
+        }
+        #modal-box {
+            background: white; padding: 25px; border-radius: 20px; max-width: 350px; text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: scaleUp 0.3s ease;
+        }
+        @keyframes scaleUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-icon { font-size: 40px; margin-bottom: 15px; display: block; }
+        .modal-text { font-size: 16px; line-height: 1.5; color: var(--dark); margin-bottom: 20px; font-weight: 500; }
+        .btn-modal { background: var(--orange); color: white; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; width: 100%; }
 
-.input-group {
-    margin-bottom: 15px;
-}
-
-input {
-    width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    font-size: 15px;
-    text-align: center;
-}
-
-input:focus {
-    border-color: var(--primary);
-    outline: none;
-    background: #fffbea;
-}
-
-.btn {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 12px;
-    background: var(--dark);
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* RECIBO */
-#reciboTela {
-    display: none;
-}
-
-.recibo {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
-.linha {
-    margin-bottom: 8px;
-}
-
-.valor {
-    margin-top: 15px;
-    padding: 15px;
-    background: #f7f7f7;
-    border-radius: 10px;
-    font-size: 20px;
-    font-weight: bold;
-    color: var(--success);
-}
-</style>
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; max-width: 100%; }
+            .edit-link, .instr, #modal-overlay { display: none; }
+        }
+    </style>
 </head>
-
 <body>
 
+<!-- MODAL CUSTOMIZADO -->
+<div id="modal-overlay">
+    <div id="modal-box">
+        <span class="modal-icon">📸</span>
+        <div class="modal-text">
+            Tudo pronto! Faça o <b>print da tela</b> para enviar ao seu cliente.<br><br>
+            Para fazer um novo recibo, basta clicar no <b>valor da corrida</b>.
+        </div>
+        <button class="btn-modal" onclick="fecharModal()">Entendi</button>
+    </div>
+</div>
+
 <div class="container">
-
-<div id="formTela" class="card">
-    <h2>Taxi Online</h2>
-
-    <div class="input-group">
-        <input type="text" id="motorista" placeholder="Motorista">
+    <!-- TELA 0: CADASTRO DO MOTORISTA -->
+    <div id="tela-cadastro">
+        <h2>Configurar Motorista</h2>
+        <div class="field-group"><label>Nome do Motorista</label><input type="text" id="reg_motorista" placeholder="Nome completo"></div>
+        <div class="field-group"><label>Telefone</label><input type="text" id="reg_tel" placeholder="Apenas números" class="only-numbers"></div>
+        <div class="row">
+            <div class="field-group"><label>Placa</label><input type="text" id="reg_placa" placeholder="ABC1D23" maxlength="7"></div>
+            <div class="field-group"><label>CPF ou CNPJ</label><input type="text" id="reg_doc" placeholder="Apenas números" class="only-numbers"></div>
+        </div>
+        <button class="btn-save" onclick="salvarCadastro()">Salvar Cadastro</button>
     </div>
 
-    <div class="input-group">
-        <input type="tel" id="tel_motorista" placeholder="Telefone">
+    <!-- TELA 1: FORMULÁRIO DO RECIBO -->
+    <div id="tela-formulario">
+        <span class="edit-link" onclick="abrirEdicaoMotorista()">⚙️ Alterar Meus Dados (Motorista)</span>
+        <h2>Fazer Recibo</h2>
+        <div class="section-title">Dados da Corrida</div>
+        <div class="field-group"><label>Origem</label><input type="text" id="origem" placeholder="Ponto de partida" class="required"></div>
+        <div class="field-group"><label>Destino</label><input type="text" id="destino" placeholder="Ponto de chegada" class="required"></div>
+        <div class="row">
+            <div class="field-group"><label>Data/Hora</label><input type="datetime-local" id="data" class="required"></div>
+            <div class="field-group"><label>Valor (R$)</label><input type="text" id="valor" placeholder="R$ 0,00" class="required" style="font-weight:bold; color:var(--success)"></div>
+        </div>
+        <div class="section-title">Dados do Cliente</div>
+        <div class="field-group"><label>Nome do Cliente</label><input type="text" id="cliente" placeholder="Nome do passageiro" class="required"></div>
+        <div class="field-group"><label>Telefone do Cliente</label><input type="text" id="tel_cliente" placeholder="Apenas números" class="required only-numbers"></div>
+        <button id="btn-gerar" class="btn-primary" onclick="mostrarRecibo()">Fazer recibo</button>
     </div>
 
-    <div class="input-group">
-        <input type="text" id="placa" placeholder="Placa (7 caracteres)" maxlength="7">
+    <!-- TELA 2: VISUALIZAÇÃO FINAL -->
+    <div id="visualizacao">
+        <div class="recibo-preview">
+            <div class="recibo-header">RECIBO DE TAXI</div>
+            <div class="section-title" style="margin-top:0">Prestador</div>
+            <div class="info-row"><span class="info-label">Motorista</span><span id="p-motorista"></span></div>
+            <div class="row">
+                <div class="info-row"><span class="info-label">Placa</span><span id="p-placa"></span></div>
+                <div class="info-row"><span class="info-label">CPF/CNPJ</span><span id="p-doc"></span></div>
+            </div>
+            <div class="info-row"><span class="info-label">Contato</span><span id="p-tel-mot"></span></div>
+            <div class="section-title">Passageiro</div>
+            <div class="info-row"><span class="info-label">Cliente</span><span id="p-cliente"></span></div>
+            <div class="info-row"><span class="info-label">Contato Cliente</span><span id="p-tel-cli"></span></div>
+            <div class="section-title">Viagem</div>
+            <div class="info-row"><span class="info-label">Trajeto</span><span id="p-trajeto"></span></div>
+            <div class="info-row"><span class="info-label">Data e Hora</span><span id="p-data"></span></div>
+            <div class="valor-box" onclick="voltarEResetar()">
+                <span class="info-label">Valor Total (Clique aqui para novo)</span>
+                <span class="valor-num" id="p-valor"></span>
+                <span id="p-extenso" style="font-size:11px; font-style:italic; color:#555"></span>
+            </div>
+        </div>
     </div>
-
-    <div class="input-group">
-        <input type="text" id="origem" placeholder="Origem">
-    </div>
-
-    <div class="input-group">
-        <input type="text" id="destino" placeholder="Destino">
-    </div>
-
-    <div class="input-group">
-        <input type="datetime-local" id="data">
-    </div>
-
-    <div class="input-group">
-        <input type="tel" id="valor" placeholder="R$ 0,00" inputmode="numeric">
-    </div>
-
-    <div class="input-group">
-        <input type="text" id="cliente" placeholder="Cliente">
-    </div>
-
-    <div class="input-group">
-        <input type="tel" id="tel_cliente" placeholder="Telefone Cliente">
-    </div>
-
-    <button class="btn" onclick="criarRecibo()">Criar Recibo</button>
-</div>
-
-<div id="reciboTela">
-    <div class="recibo">
-        <h3>RECIBO DE TAXI</h3>
-
-        <div class="linha"><b>Motorista:</b> <span id="r_motorista"></span></div>
-        <div class="linha"><b>Telefone:</b> <span id="r_tel_motorista"></span></div>
-        <div class="linha"><b>Placa:</b> <span id="r_placa"></span></div>
-
-        <hr>
-
-        <div class="linha"><b>Origem:</b> <span id="r_origem"></span></div>
-        <div class="linha"><b>Destino:</b> <span id="r_destino"></span></div>
-        <div class="linha"><b>Data:</b> <span id="r_data"></span></div>
-
-        <hr>
-
-        <div class="linha"><b>Cliente:</b> <span id="r_cliente"></span></div>
-        <div class="linha"><b>Telefone:</b> <span id="r_tel_cliente"></span></div>
-
-        <div class="valor" id="r_valor"></div>
-    </div>
-</div>
-
 </div>
 
 <script>
-// --- DATA AUTOMÁTICA ---
-window.onload = () => {
-    const d = new Date();
-    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-    document.getElementById('data').value = d.toISOString().slice(0,16);
-};
+    function fecharModal() { document.getElementById('modal-overlay').style.display = 'none'; }
 
-// --- MÁSCARA TELEFONE ---
-function mascaraTelefone(v) {
-    v = v.replace(/\D/g, '');
-    v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
-    v = v.replace(/(\d{5})(\d)/, "$1-$2");
-    return v;
-}
+    function inicializarApp() {
+        const motoristaSalvo = localStorage.getItem('dados_motorista');
+        if (motoristaSalvo) {
+            document.getElementById('tela-cadastro').style.display = 'none';
+            document.getElementById('tela-formulario').style.display = 'block';
+            setarDataAtual();
+        } else {
+            document.getElementById('tela-cadastro').style.display = 'block';
+            document.getElementById('tela-formulario').style.display = 'none';
+        }
+    }
 
-tel_motorista.addEventListener('input', e => {
-    e.target.value = mascaraTelefone(e.target.value);
-});
+    function salvarCadastro() {
+        const dados = {
+            nome: document.getElementById('reg_motorista').value,
+            tel: document.getElementById('reg_tel').value,
+            placa: document.getElementById('reg_placa').value.toUpperCase(),
+            doc: document.getElementById('reg_doc').value
+        };
+        if (!dados.nome || !dados.tel || !dados.placa) { alert("Nome, Telefone e Placa são obrigatórios."); return; }
+        localStorage.setItem('dados_motorista', JSON.stringify(dados));
+        inicializarApp();
+    }
 
-tel_cliente.addEventListener('input', e => {
-    e.target.value = mascaraTelefone(e.target.value);
-});
+    function abrirEdicaoMotorista() {
+        const dados = JSON.parse(localStorage.getItem('dados_motorista'));
+        document.getElementById('reg_motorista').value = dados.nome;
+        document.getElementById('reg_tel').value = dados.tel;
+        document.getElementById('reg_placa').value = dados.placa;
+        document.getElementById('reg_doc').value = dados.doc;
+        document.getElementById('tela-formulario').style.display = 'none';
+        document.getElementById('tela-cadastro').style.display = 'block';
+    }
 
-// --- PLACA MAIÚSCULA ---
-placa.addEventListener('input', e => {
-    e.target.value = e.target.value.toUpperCase();
-});
+    document.querySelectorAll('.only-numbers').forEach(input => {
+        input.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+            validarFormulario();
+        });
+    });
 
-// --- MÁSCARA REAL ---
-valor.addEventListener('input', e => {
-    let v = e.target.value.replace(/\D/g,'');
-    v = (v/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-    e.target.value = v;
-});
+    const inputsExigidos = document.querySelectorAll('.required');
+    const btnGerar = document.getElementById('btn-gerar');
 
-// --- CRIAR RECIBO ---
-function criarRecibo(){
-    formTela.style.display = 'none';
-    reciboTela.style.display = 'block';
+    function validarFormulario() {
+        let todosOk = true;
+        inputsExigidos.forEach(input => { if (input.value.trim() === "" || input.value === "R$ 0,00") todosOk = false; });
+        btnGerar.style.display = todosOk ? 'block' : 'none';
+    }
 
-    r_motorista.innerText = motorista.value;
-    r_tel_motorista.innerText = tel_motorista.value;
-    r_placa.innerText = placa.value;
-    r_origem.innerText = origem.value;
-    r_destino.innerText = destino.value;
-    r_data.innerText = new Date(data.value).toLocaleString('pt-BR');
-    r_cliente.innerText = cliente.value;
-    r_tel_cliente.innerText = tel_cliente.value;
-    r_valor.innerText = valor.value;
-}
+    const inputValor = document.getElementById('valor');
+    inputValor.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '');
+        v = (v / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        e.target.value = v;
+        validarFormulario();
+    });
+
+    inputsExigidos.forEach(input => input.addEventListener('input', validarFormulario));
+
+    function setarDataAtual() {
+        const agora = new Date();
+        agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
+        const dataInput = document.getElementById('data');
+        if(dataInput) dataInput.value = agora.toISOString().slice(0, 16);
+    }
+
+    function mostrarRecibo() {
+        const mot = JSON.parse(localStorage.getItem('dados_motorista'));
+        document.getElementById('p-motorista').innerText = mot.nome;
+        document.getElementById('p-doc').innerText = mot.doc || '---';
+        document.getElementById('p-placa').innerText = mot.placa;
+        document.getElementById('p-tel-mot').innerText = mot.tel;
+        document.getElementById('p-cliente').innerText = document.getElementById('cliente').value;
+        document.getElementById('p-tel-cli').innerText = document.getElementById('tel_cliente').value;
+        document.getElementById('p-trajeto').innerText = `${document.getElementById('origem').value} ➔ ${document.getElementById('destino').value}`;
+        document.getElementById('p-data').innerText = new Date(document.getElementById('data').value).toLocaleString('pt-BR');
+        document.getElementById('p-valor').innerText = document.getElementById('valor').value;
+        document.getElementById('p-extenso').innerText = `(${valorPorExtenso(document.getElementById('valor').value)})`;
+
+        document.getElementById('tela-formulario').style.display = 'none';
+        document.getElementById('visualizacao').style.display = 'block';
+        
+        // MOSTRAR NOVO POPUP
+        document.getElementById('modal-overlay').style.display = 'flex';
+        window.scrollTo(0,0);
+    }
+
+    function voltarEResetar() {
+        document.getElementById('origem').value = "";
+        document.getElementById('destino').value = "";
+        document.getElementById('cliente').value = "";
+        document.getElementById('tel_cliente').value = "";
+        document.getElementById('valor').value = "";
+        setarDataAtual();
+        validarFormulario();
+        document.getElementById('visualizacao').style.display = 'none';
+        document.getElementById('tela-formulario').style.display = 'block';
+    }
+
+    function valorPorExtenso(val) {
+        let cleanVal = val.replace("R$", "").replace(/\./g, "").replace(",", ".");
+        let valor = parseFloat(cleanVal);
+        if (!valor) return "";
+        const unidades = ["", "Um", "Dois", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove"];
+        const dezena1 = ["Dez", "Onze", "Doze", "Treze", "Quatorze", "Quinze", "Dezesseis", "Dezessete", "Dezoito", "Dezenove"];
+        const dezenas = ["", "", "Vinte", "Trinta", "Quarenta", "Cinquenta", "Sessenta", "Setenta", "Oitenta", "Noventa"];
+        const centenas = ["", "Cento", "Duzentos", "Trezentos", "Quatrocentos", "Quinhentos", "Seiscentos", "Setecentos", "Oitocentos", "Novecentos"];
+        function conversor(n) {
+            if (n === 0) return "";
+            if (n === 100) return "Cem";
+            let res = "";
+            if (n >= 100) { res += centenas[Math.floor(n / 100)]; n %= 100; if (n > 0) res += " e "; }
+            if (n >= 10 && n < 20) { res += dezena1[n - 10]; } 
+            else { if (n >= 20) { res += dezenas[Math.floor(n / 10)]; n %= 10; if (n > 0) res += " e "; } if (n > 0) res += unidades[n]; }
+            return res;
+        }
+        let inteiro = Math.floor(valor);
+        let centavos = Math.round((valor - inteiro) * 100);
+        let partes = [];
+        if (inteiro > 0) partes.push(conversor(inteiro) + (inteiro === 1 ? " Real" : " Reais"));
+        if (centavos > 0) partes.push(conversor(centavos) + (centavos === 1 ? " Centavo" : " Centavos"));
+        return partes.join(" e ");
+    }
+
+    inicializarApp();
 </script>
-
 </body>
 </html>
